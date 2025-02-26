@@ -1,0 +1,46 @@
+import 'package:get_it/get_it.dart';
+import 'package:get_storage/get_storage.dart';
+import 'package:musicapp/handlers/ihandler_dart.dart';
+import 'package:musicapp/models/songs.dart';
+
+class PlaylistController{
+
+  var playlistList = <Songs>[];
+  String playlistId = "";
+  var serverType = GetStorage().read('ServerType');
+  late IHandler handler;
+  PlaylistController();
+
+
+  clearList(){
+    playlistList.clear();
+  }
+
+  Future<List<Songs>> onInit() async {
+    handler = GetIt.instance<IHandler>(instanceName: serverType);
+    try {
+      clearList();
+      playlistList = await handler.returnSongsFromPlaylist(playlistId);
+      return playlistList;
+    } catch (error) {
+      // Handle errors if needed
+      rethrow;
+    }
+  }
+
+  Future<List<Songs>> getPlaylistData(String playlistId)async{
+    try {
+      clearList();
+      playlistList = await handler.returnSongsFromPlaylist(playlistId);
+      return playlistList;
+    } catch (error) {
+      // Handle errors if needed
+      rethrow;
+    }
+  }
+
+  Future<void> deleteSongFromPlaylist(String songId, String playlistId)async{
+    await handler.deleteSongFromPlaylist(songId, playlistId);
+  }
+
+}

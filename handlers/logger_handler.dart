@@ -1,0 +1,48 @@
+import 'package:musicapp/helpers/conversions.dart';
+import 'package:musicapp/hive/helpers/log_hive_helper.dart';
+import 'package:musicapp/models/log.dart';
+import 'package:uuid/uuid.dart';
+
+
+class LogHandler{
+
+  LogHelper logHelper = LogHelper();
+  Conversions conversions = Conversions();
+
+  openBox()async{
+    await logHelper.openBox();
+  }
+
+  clearLogs()async{
+    logHelper.clearLog();
+  }
+
+  listLogsFromBox(){
+    return logHelper.listFromLog();
+  }
+
+  addToLog(LogModel log)async{
+    log.id = const Uuid().v4().toString();
+    await logHelper.openBox();
+    try{
+      logHelper.addToLog(conversions.returnLogFromLogModel(log));
+    }catch(e){
+      //log
+    }
+
+    // logHelper.addToLog(Log(id: log.id!, logType: log.logType!, logMessage: log.logMessage!, logDateTime: log.logDateTime! ));
+  }
+
+  listFromLog(){
+    logHelper.openBox();
+    List<LogModel> logModelList = [];
+    var logRaw = logHelper.listFromLog();
+    for(var log in logRaw){
+      logModelList.add(conversions.returnLogModelFromLog(log));
+    }
+    return logModelList;
+  }
+
+
+
+}
